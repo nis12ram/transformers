@@ -684,6 +684,10 @@ _import_structure = {
         "Qwen2Config",
         "Qwen2Tokenizer",
     ],
+    "models.bitqwen2": [
+        "Qwen2Config",
+        "Qwen2Tokenizer",
+    ],
     "models.qwen2_audio": [
         "Qwen2AudioConfig",
         "Qwen2AudioEncoderConfig",
@@ -1103,6 +1107,7 @@ else:
     _import_structure["models.openai"].append("OpenAIGPTTokenizerFast")
     _import_structure["models.pegasus"].append("PegasusTokenizerFast")
     _import_structure["models.qwen2"].append("Qwen2TokenizerFast")
+    _import_structure["models.bitqwen2"].append("Qwen2TokenizerFast")
     _import_structure["models.reformer"].append("ReformerTokenizerFast")
     _import_structure["models.rembert"].append("RemBertTokenizerFast")
     _import_structure["models.roberta"].append("RobertaTokenizerFast")
@@ -3144,6 +3149,12 @@ else:
             "Qwen2PreTrainedModel",
         ]
     )
+    _import_structure["models.bitqwen2"].extend(
+        [
+            "BitQwen2ForCausalLM",
+            "BitQwen2ForCausalLMInf",
+        ]
+    )
     _import_structure["models.qwen2_audio"].extend(
         [
             "Qwen2AudioEncoder",
@@ -3845,6 +3856,7 @@ else:
     _import_structure["trainer"] = ["Trainer"]
     _import_structure["trainer_pt_utils"] = ["torch_distributed_zero_first"]
     _import_structure["trainer_seq2seq"] = ["Seq2SeqTrainer"]
+    _import_structure["models.bitnet"] = ["ClampSTE", "SignSTE", "BitLinear", "BitLinearInf"]
 
 # TensorFlow-backed objects
 try:
@@ -7707,6 +7719,11 @@ if TYPE_CHECKING:
             Qwen2ForTokenClassification,
             Qwen2Model,
             Qwen2PreTrainedModel,
+        )
+        from .models.bitqwen2 import (
+            BitQwen2ForCausalLM,
+            BitQwen2ForCausalLMInf
+           
         )
         from .models.qwen2_audio import (
             Qwen2AudioEncoder,

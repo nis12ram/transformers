@@ -204,6 +204,7 @@ from . import (
     prophetnet,
     pvt,
     pvt_v2,
+    bitqwen2,
     qwen2,
     qwen2_audio,
     qwen2_moe,
