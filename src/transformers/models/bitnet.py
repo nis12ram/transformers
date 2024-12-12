@@ -92,9 +92,11 @@ class BitLinear(nn.Module):
         init.constant_(self.W, 1.0)
         init.constant_(self.H, 1.0)
         if self.bias is not None:
-            fan_in, _ = init._calculate_fan_in_and_fan_out(self.weight)
-            bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
-            init.uniform_(self.bias, -bound, bound)
+            # fan_in, _ = init._calculate_fan_in_and_fan_out(self.weight)
+            # bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
+            # init.uniform_(self.bias, -bound, bound)
+            init.constant_(self.bias, 1.0)
+
             
     def forward(self, input):
         # input = input * self.input_factor.view(1, self.in_features)
