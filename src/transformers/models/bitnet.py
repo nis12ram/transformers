@@ -35,7 +35,7 @@ class SignSTE(nn.Module):
 #         self.in_features = in_features
 #         self.out_features = out_features
 #         self.groups = groups            # now omitted!
-#         self.weight = nn.Parameter(torch.empty((out_features, in_features), **factory_kwargs))
+        # self.weight = nn.Parameter(torch.empty((out_features, in_features), **factory_kwargs))
 #         self.weight_scale = nn.Parameter(torch.empty(out_features, **factory_kwargs))
 #         self.sign = SignSTE()
 #         self.input_factor = nn.Parameter(torch.empty(in_features, **factory_kwargs))
@@ -75,8 +75,6 @@ class BitLinear(nn.Module):
         self.in_features = in_features
         self.out_features = out_features
         self.rank = rank
-        # self.W = nn.Parameter(torch.empty(out_features, **factory_kwargs))
-        # self.H = nn.Parameter(torch.empty(in_features, **factory_kwargs))
         self.W = nn.Parameter(torch.empty((out_features, rank), **factory_kwargs))
         self.H = nn.Parameter(torch.empty((rank, in_features), **factory_kwargs))
         
@@ -105,7 +103,11 @@ class BitLinear(nn.Module):
         # output *= self.weight_scale.view(1, self.out_features)
         
         # output = self.layernorm(output)
-        output = F.linear(input, torch.matmul(self.W, self.H))
+        # output = F.linear(input, torch.matmul(self.W, self.H))
+        
+        input = torch.matmul(input, self.H.T) # (b, r) b -> batch_size, r -> rank from svd
+        output = torch.matmul(input, self.W.T) # (b, m) m -> out_features 
+
         if self.bias is not None:
             output += self.bias
         
