@@ -69,7 +69,7 @@ class SignSTE(nn.Module):
  
 ## for simple svd 
 class BitLinear(nn.Module):
-    def __init__(self, in_features, out_features, groups=1, rank = 10, train_rank = 4, bias=False, device=None, dtype=None):
+    def __init__(self, in_features, out_features, groups=1, rank = 100, train_rank = 4, bias=False, device=None, dtype=None):
         factory_kwargs = {'device': device, 'dtype': dtype}
         super().__init__()
         self.in_features = in_features
