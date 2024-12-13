@@ -69,15 +69,18 @@ class SignSTE(nn.Module):
  
 ## for simple svd 
 class BitLinear(nn.Module):
-    def __init__(self, in_features, out_features, groups=1, rank = 100, bias=False, device=None, dtype=None):
+    def __init__(self, in_features, out_features, groups=1, rank = 10, train_rank = 4, bias=False, device=None, dtype=None):
         factory_kwargs = {'device': device, 'dtype': dtype}
         super().__init__()
         self.in_features = in_features
         self.out_features = out_features
         self.rank = rank
+        self.train_rank = train_rank
         self.W = nn.Parameter(torch.empty((out_features, rank), **factory_kwargs))
         self.H = nn.Parameter(torch.empty((rank, in_features), **factory_kwargs))
-        
+        # self.train_W = nn.Parameter(torch.empty((out_features, train_rank), **factory_kwargs))
+        # self.train_H = nn.Parameter(torch.empty((train_rank, in_features), **factory_kwargs))
+
         if bias:
             self.bias = nn.Parameter(torch.empty(out_features, **factory_kwargs))
         else:
@@ -98,17 +101,16 @@ class BitLinear(nn.Module):
 
             
     def forward(self, input):
-        # input = input * self.input_factor.view(1, self.in_features)
-        # weight = self.sign(self.weight)
-        # output = F.linear(input, weight)
-        # output *= self.weight_scale.view(1, self.out_features)
-        
-        # output = self.layernorm(output)
-        # output = F.linear(input, torch.matmul(self.W, self.H))
-        
-        input = torch.matmul(input, self.H.T) # (b, r) b -> batch_size, r -> rank from svd
-        output = torch.matmul(input, self.W.T) # (b, m) m -> out_features 
-        output = self.layernorm(output)
+        ##trainable one 
+        # first_input = torch.matmul(input, self.H.T) # (b, r) b -> batch_size, r -> rank from svd
+        # first_output = torch.matmul(first_input, self.W.T) # (b, m) m -> out_features 
+        # second_input = torch.matmul(input, self.train_H.T) # (b, r) b -> batch_size, r -> rank from svd
+        # second_output = torch.matmul(second_input, self.train_W.T) # (b, m) m -> out_features 
+        # output = first_output + second_output
+
+        first_input = torch.matmul(input, self.H.T) # (b, r) b -> batch_size, r -> rank from svd
+        first_output = torch.matmul(first_input, self.W.T) # (b, m) m -> out_features 
+        output = self.layernorm(first_output)
         if self.bias is not None:
             output += self.bias
         
