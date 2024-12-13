@@ -44,7 +44,7 @@ class SignSTE(nn.Module):
 #             self.bias = nn.Parameter(torch.empty(out_features, **factory_kwargs))
 #         else:
 #             self.register_parameter('bias', None)
-#         self.layernorm = nn.LayerNorm(out_features, elementwise_affine=False)
+        # self.layernorm = nn.LayerNorm(out_features, elementwise_affine=False)
 #         self.reset_parameters()
 
 #     def reset_parameters(self):
@@ -61,7 +61,7 @@ class SignSTE(nn.Module):
 #         output = F.linear(input, weight)
 #         output *= self.weight_scale.view(1, self.out_features)
         
-#         output = self.layernorm(output)
+        # output = self.layernorm(output)
 #         if self.bias is not None:
 #             output += self.bias
         
@@ -82,6 +82,7 @@ class BitLinear(nn.Module):
             self.bias = nn.Parameter(torch.empty(out_features, **factory_kwargs))
         else:
             self.register_parameter('bias', None)
+        self.layernorm = nn.LayerNorm(out_features, elementwise_affine=False)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -107,7 +108,7 @@ class BitLinear(nn.Module):
         
         input = torch.matmul(input, self.H.T) # (b, r) b -> batch_size, r -> rank from svd
         output = torch.matmul(input, self.W.T) # (b, m) m -> out_features 
-
+        output = self.layernorm(output)
         if self.bias is not None:
             output += self.bias
         
