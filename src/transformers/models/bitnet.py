@@ -114,7 +114,7 @@ class BitLinear(nn.Module):
         first_output = torch.matmul(first_input, self.W.T) # (b, m) m -> out_features 
         second_input = torch.matmul(input, self.train_H.T)
         second_output = torch.matmul(second_input, self.train_W.T) # (b, m) m -> out_features 
-        print(first_output.shape,second_output.shape)
+        # print(first_output.shape,second_output.shape)
         output = torch.add(first_output, second_output)
         output = self.layernorm(output)
         if self.bias is not None:
