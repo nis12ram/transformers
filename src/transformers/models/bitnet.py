@@ -91,8 +91,8 @@ class BitLinear(nn.Module):
     def reset_parameters(self):
         # init.constant_(self.weight_scale, 1.0)
         # init.constant_(self.input_factor, 1.0)
-        init.constant_(self.W, 1.0)
-        init.constant_(self.H, 1.0)
+        init.xavier_uniform_(self.W)
+        init.xavier_uniform_(self.H)
         init.xavier_uniform_(self.train_W)
         init.xavier_uniform_(self.train_H)
         if self.bias is not None:
@@ -114,7 +114,8 @@ class BitLinear(nn.Module):
         first_output = torch.matmul(first_input, self.W.T) # (b, m) m -> out_features 
         second_input = torch.matmul(input, self.train_H.T)
         second_output = torch.matmul(second_input, self.train_W.T) # (b, m) m -> out_features 
-        output = first_output + second_output
+        print(first_output.shape,second_output.shape)
+        output = torch.add(first_output, second_output)
         output = self.layernorm(output)
         if self.bias is not None:
             output += self.bias
