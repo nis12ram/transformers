@@ -110,7 +110,8 @@ class BitLinear(nn.Module):
 
         first_input = torch.matmul(input, self.H.T) # (b, r) b -> batch_size, r -> rank from svd
         first_output = torch.matmul(first_input, self.W.T) # (b, m) m -> out_features 
-        output = self.layernorm(first_output)
+        # output = self.layernorm(first_output)
+        output = first_output
         if self.bias is not None:
             output += self.bias
         
