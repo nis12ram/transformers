@@ -69,7 +69,7 @@ class SignSTE(nn.Module):
  
 ## for simple svd 
 class BitLinear(nn.Module):
-    def __init__(self, in_features, out_features, groups=1, rank = 100, train_rank = 4, bias=False, device=None, dtype=None):
+    def __init__(self, in_features, out_features, groups=1, rank = 10, train_rank = 4, bias=False, device=None, dtype=None):
         factory_kwargs = {'device': device, 'dtype': dtype}
         super().__init__()
         self.in_features = in_features
@@ -78,8 +78,8 @@ class BitLinear(nn.Module):
         self.train_rank = train_rank
         self.W = nn.Parameter(torch.empty((out_features, rank), **factory_kwargs))
         self.H = nn.Parameter(torch.empty((rank, in_features), **factory_kwargs))
-        # self.train_W = nn.Parameter(torch.empty((out_features, train_rank), **factory_kwargs))
-        # self.train_H = nn.Parameter(torch.empty((train_rank, in_features), **factory_kwargs))
+        self.train_W = nn.Parameter(torch.empty((out_features, train_rank), **factory_kwargs))
+        self.train_H = nn.Parameter(torch.empty((train_rank, in_features), **factory_kwargs))
 
         if bias:
             self.bias = nn.Parameter(torch.empty(out_features, **factory_kwargs))
@@ -110,8 +110,10 @@ class BitLinear(nn.Module):
 
         first_input = torch.matmul(input, self.H.T) # (b, r) b -> batch_size, r -> rank from svd
         first_output = torch.matmul(first_input, self.W.T) # (b, m) m -> out_features 
-        # output = self.layernorm(first_output)
-        output = first_output
+        second_input = torch.matmul(input, self.train_H.T)
+        second_output = torch.matmul(second_input, self.train_W.T) # (b, m) m -> out_features 
+        output = first_output + second_output
+        output = self.layernorm(output)
         if self.bias is not None:
             output += self.bias
         
